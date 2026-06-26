@@ -1,0 +1,433 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Juego de las Vocales por Niveles! 🌟</title>
+    <style>
+        /* Pantalla Completa Absoluta */
+        html, body {
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+            font-family: 'Comic Sans MS', 'Chalkboard SE', 'Arial', sans-serif;
+            background: radial-gradient(circle, #FFF3B0 0%, #FFDEE9 100%);
+            user-select: none;
+        }
+
+        /* Estructura de tres secciones a pantalla completa */
+        .contenedor-pantalla-completa {
+            display: flex;
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        /* Paneles Laterales Minimizados */
+        .panel-lateral {
+            width: 14%;
+            min-width: 130px;
+            height: 100%;
+            background-color: rgba(255, 255, 255, 0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-around;
+            padding: 10px;
+            box-sizing: border-box;
+            z-index: 10;
+            border-right: 4px dashed rgba(0,0,0,0.05);
+        }
+
+        .panel-derecho {
+            border-right: none;
+            border-left: 4px dashed rgba(0,0,0,0.05);
+        }
+
+        /* Centro de la pantalla maximizado */
+        .zona-central {
+            width: 72%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            box-sizing: border-box;
+            padding: 10px;
+        }
+
+        .bloque-ilustracion {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* DIBUJO SUPER GIGANTE (Soporta Emoji o Imagen IA) */
+        .recurso-visual-gigante {
+            font-size: min(48vh, 48vw); 
+            line-height: 1;
+            text-align: center;
+            transition: transform 0.15s ease-out;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .img-ia {
+            width: min(48vh, 48vw);
+            height: min(48vh, 48vw);
+            object-fit: contain;
+            border-radius: 24px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        }
+
+        /* PALABRA COLOSAL CON ESPACIADO EQUILIBRADO */
+        .palabra-etiqueta {
+            font-size: min(11vh, 11vw); 
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            margin-top: 30px; 
+            margin-bottom: 0;
+            padding: 0px 20px;
+            text-align: center;
+            text-shadow: 6px 6px 0px #FFF, -2px -2px 0px #FFF, 2px -2px 0px #FFF, -2px 2px 0px #FFF;
+            filter: drop-shadow(5px 5px 5px rgba(0,0,0,0.2));
+            transition: transform 0.2s ease;
+            line-height: 1.1;
+        }
+
+        /* Relojes e Indicadores */
+        .indicador-caja {
+            background-color: white;
+            border-radius: 20px;
+            padding: 10px 5px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            width: 95%;
+            border: 3px solid #FFB7B2;
+        }
+
+        .titulo-marcador {
+            font-size: 0.9rem;
+            color: #555;
+            margin: 0;
+            text-transform: uppercase;
+            font-weight: bold;
+        }
+
+        .valor-marcador {
+            font-size: 1.7rem;
+            font-weight: bold;
+            margin: 2px 0 0 0;
+        }
+
+        .color-palabra { color: #F4A261; }
+        .color-puntos { color: #2A9D8F; }
+
+        /* Botones Laterales */
+        .bloque-botones {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        button {
+            font-family: 'Comic Sans MS', sans-serif;
+            font-size: 1.1rem;
+            font-weight: bold;
+            padding: 18px 5px;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0px 5px 0px rgba(0,0,0,0.1);
+            transition: all 0.1s ease;
+            width: 100%;
+            text-align: center;
+        }
+
+        button:active {
+            transform: translateY(4px);
+            box-shadow: 0px 1px 0px rgba(0,0,0,0.1);
+        }
+
+        .btn-bien { background-color: #B5E2FA; color: #1D3557; font-size: 1.2rem; }
+        .btn-mal { background-color: #FFC6FF; color: #4A004A; }
+        
+        /* Botón de control manual llamativo */
+        .btn-siguiente-accion {
+            background-color: #4AF2A1;
+            color: #004D26;
+            font-size: 1.5rem;
+            padding: 22px 10px;
+            animation: pulso 1.5s infinite;
+        }
+
+        @keyframes pulso {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.03); }
+            100% { transform: scale(1); }
+        }
+
+        /* Selector de Nivel */
+        .select-nivel {
+            width: 95%;
+            font-family: 'Comic Sans MS', sans-serif;
+            font-size: 1rem;
+            font-weight: bold;
+            padding: 8px;
+            border-radius: 12px;
+            border: 2px solid #8E24AA;
+            text-align: center;
+            color: #4A004A;
+        }
+
+        /* Capa de destello rápido */
+        .feedback-capa {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 0;
+            transition: opacity 0.1s ease;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="feedback" class="feedback-capa"></div>
+
+    <div class="contenedor-pantalla-completa" id="interfaz-juego">
+        
+        <!-- Panel Izquierdo: Control de Niveles -->
+        <div class="panel-lateral">
+            <div class="indicador-caja">
+                <p class="titulo-marcador">Progreso 📊</p>
+                <select class="select-nivel" id="selector-nivel" onchange="cambiarNivelManual(this.value)">
+                    <option value="1">Nivel 1</option>
+                    <option value="2">Nivel 2</option>
+                    <option value="3">Nivel 3</option>
+                </select>
+            </div>
+
+            <div class="indicador-caja">
+                <p class="titulo-marcador">Palabra ⏰</p>
+                <p class="valor-marcador color-palabra" id="reloj-palabra">25s</p>
+            </div>
+            
+            <div style="font-size: 2.5rem;">🧒✨</div>
+        </div>
+
+        <!-- Zona Central: Ilustración Colosal -->
+        <div class="zona-central">
+            <div class="bloque-ilustracion">
+                <div class="recurso-visual-gigante" id="caja-visual">🌳</div>
+                <div class="palabra-etiqueta" id="texto-palabra">ÁRBOL</div>
+            </div>
+        </div>
+
+        <!-- Panel Derecho: Acciones de Calificación e Interfaz Manual -->
+        <div class="panel-lateral panel-derecho">
+            <div class="indicador-caja">
+                <p class="titulo-marcador">Aciertos ⭐</p>
+                <p class="valor-marcador color-puntos" id="puntos">0</p>
+            </div>
+
+            <div class="bloque-botones" id="contenedor-controles">
+                <button class="btn-bien" onclick="calificar(true)">¡Bien! 👍</button>
+                <button class="btn-mal" onclick="calificar(false)">¡Mal! 👎</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // Configuración inicial de palabras por Niveles
+        const nivelesJuego = {
+            1: [
+                { tipo: "emoji", contenido: "🌳", nombre: "Árbol" },
+                { tipo: "emoji", contenido: "🐘", nombre: "Elefante" },
+                { tipo: "emoji", contenido: "🏝️", nombre: "Isla" },
+                { tipo: "emoji", contenido: "🐻", nombre: "Oso" },
+                { tipo: "emoji", contenido: "🍇", nombre: "Uva" },
+                { tipo: "emoji", contenido: "✈️", nombre: "Avión" },
+                { tipo: "emoji", contenido: "💉", nombre: "Inyección" },
+                { tipo: "emoji", contenido: "8️⃣", nombre: "8" },
+                { tipo: "emoji", contenido: "💅", nombre: "Uña" }
+            ],
+            2: [
+                { tipo: "emoji", contenido: "🐝", nombre: "Abeja" },
+                { tipo: "emoji", contenido: "⭐", nombre: "Estrella" },
+                { tipo: "emoji", contenido: "🦎", nombre: "Iguana" },
+                { tipo: "emoji", contenido: "🐑", nombre: "Oveja" },
+                { tipo: "emoji", contenido: "🦄", nombre: "Unicornio" },
+                { tipo: "emoji", contenido: "🐿️", nombre: "Ardilla" },
+                { tipo: "emoji", contenido: "⛪", nombre: "Iglesia" },
+                { tipo: "emoji", contenido: "👷", nombre: "Obrero" },
+                { tipo: "emoji", contenido: "🥋", nombre: "Uniforme" }
+            ],
+            3: [
+                { tipo: "emoji", contenido: "🌈", nombre: "Arcoiris" },
+                { tipo: "emoji", contenido: "🪞", nombre: "Espejo" },
+                { tipo: "emoji", contenido: "🖨️", nombre: "Impresora" }, 
+                { tipo: "emoji", contenido: "🐻", nombre: "Oso" },
+                { tipo: "emoji", contenido: "🇺", nombre: "U" },
+                { tipo: "emoji", contenido: "👵", nombre: "Abuela" },
+                { tipo: "emoji", contenido: "🏫", nombre: "Escuela" },
+                { tipo: "emoji", contenido: "🪲", nombre: "Insecto" },
+                { tipo: "emoji", contenido: "🌊", nombre: "Océano" },
+                { tipo: "emoji", contenido: "🎓", nombre: "Universidad" }
+            ]
+        };
+
+        const coloresTexto = ["#FF3B3F", "#FFCA28", "#7CB342", "#0288D1", "#8E24AA", "#FF5722", "#00BFA5", "#E91E63"];
+
+        let nivelActual = 1;
+        let palabrasMazo = [];
+        let indiceActual = 0;
+        
+        let aciertos = 0;
+        let tiempoPalabra = 25; 
+        let idIntervaloPalabra;
+
+        // Función para mezclar/barajar un arreglo de forma aleatoria (Algoritmo Fisher-Yates)
+        function barajarMazo(arreglo) {
+            let mazoCopia = [...arreglo];
+            for (let i = mazoCopia.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [mazoCopia[i], mazoCopia[j]] = [mazoCopia[j], mazoCopia[i]];
+            }
+            return mazoCopia;
+        }
+
+        function cargarNivel(nivel) {
+            nivelActual = parseInt(nivel);
+            document.getElementById("selector-nivel").value = nivelActual;
+            
+            // Genera el primer mazo barajado aleatoriamente para este nivel
+            palabrasMazo = barajarMazo(nivelesJuego[nivelActual]);
+            indiceActual = 0;
+            aciertos = 0;
+            
+            document.getElementById("puntos").innerText = aciertos;
+            mostrarPalabra();
+        }
+
+        function mostrarPalabra() {
+            // Verificación del ciclo continuo: si terminamos el mazo entero
+            if (indiceActual >= palabrasMazo.length) {
+                // Genera un mazo completamente nuevo, barajado de forma distinta, y reinicia el índice
+                palabrasMazo = barajarMazo(nivelesJuego[nivelActual]);
+                indiceActual = 0;
+            }
+
+            const elementoActual = palabrasMazo[indiceActual];
+            const contenedorVisual = document.getElementById("caja-visual");
+            
+            // Renderizado (Soporta Emoji o Imagen IA si cambias el tipo en el arreglo)
+            if(elementoActual.tipo === "imagen") {
+                contenedorVisual.innerHTML = `<img src="${elementoActual.contenido}" class="img-ia" alt="${elementoActual.nombre}">`;
+                contenedorVisual.style.fontSize = "initial";
+            } else {
+                contenedorVisual.innerText = elementoActual.contenido;
+                contenedorVisual.style.fontSize = "min(48vh, 48vw)";
+            }
+
+            const cajaTexto = document.getElementById("texto-palabra");
+            cajaTexto.innerText = elementoActual.nombre;
+            
+            const colorAleatorio = coloresTexto[Math.floor(Math.random() * coloresTexto.length)];
+            cajaTexto.style.color = colorAleatorio;
+            
+            // Animación sutil de actualización de pantalla
+            contenedorVisual.style.transform = "scale(0.5)";
+            cajaTexto.style.transform = "scale(0.5)";
+            setTimeout(() => { 
+                contenedorVisual.style.transform = "scale(1)"; 
+                cajaTexto.style.transform = "scale(1)";
+            }, 50);
+
+            restablecerControlesEvaluacion();
+            reiniciarTimerPalabra();
+        }
+
+        function reiniciarTimerPalabra() {
+            clearInterval(idIntervaloPalabra);
+            tiempoPalabra = 25;
+            document.getElementById("reloj-palabra").innerText = tiempoPalabra + "s";
+            
+            idIntervaloPalabra = setInterval(() => {
+                tiempoPalabra--;
+                document.getElementById("reloj-palabra").innerText = tiempoPalabra + "s";
+                
+                if (tiempoPalabra <= 0) {
+                    // Si se agota el tiempo, entra en el estado de pausa esperando tu clic manual
+                    activarPausaManual();
+                }
+            }, 1000);
+        }
+
+        function calificar(fueCorrecto) {
+            if (fueCorrecto) {
+                aciertos++;
+                document.getElementById("puntos").innerText = aciertos;
+                mostrarFeedbackVisual(true);
+            } else {
+                mostrarFeedbackVisual(false);
+            }
+            // Entra en pausa manual esperando tu confirmación
+            activarPausaManual();
+        }
+
+        function activarPausaManual() {
+            clearInterval(idIntervaloPalabra);
+            
+            const contenedor = document.getElementById("contenedor-controles");
+            contenedor.innerHTML = `
+                <button class="btn-siguiente-accion" onclick="avanzarFlujoManual()">
+                    Siguiente Palabra ➡️
+                </button>
+            `;
+        }
+
+        function restablecerControlesEvaluacion() {
+            const contenedor = document.getElementById("contenedor-controles");
+            contenedor.innerHTML = `
+                <button class="btn-bien" onclick="calificar(true)">¡Bien! 👍</button>
+                <button class="btn-mal" onclick="calificar(false)">¡Mal! 👎</button>
+            `;
+        }
+
+        function avanzarFlujoManual() {
+            indiceActual++;
+            mostrarPalabra();
+        }
+
+        function cambiarNivelManual(nuevoNivel) {
+            cargarNivel(nuevoNivel);
+        }
+
+        function mostrarFeedbackVisual(esCorrecto) {
+            const feedback = document.getElementById("feedback");
+            feedback.style.backgroundColor = esCorrecto ? "rgba(138, 201, 38, 0.4)" : "rgba(255, 89, 94, 0.4)";
+            feedback.style.opacity = "1";
+            setTimeout(() => { feedback.style.opacity = "0"; }, 120);
+        }
+
+        // Inicialización del juego al cargar la página
+        window.onload = () => {
+            cargarNivel(1);
+        };
+    </script>
+</body>
+</html>
